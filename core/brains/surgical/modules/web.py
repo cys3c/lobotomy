@@ -1,7 +1,6 @@
 from androguard.decompiler.dad import decompile
 from pygments import highlight
 from pygments.lexers import JavaLexer
-from pygments.lexers.dalvik import SmaliLexer
 from pygments.formatters import TerminalFormatter
 from core.logging.logger import Logger
 from blessings import Terminal
