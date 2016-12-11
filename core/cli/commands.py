@@ -90,7 +90,7 @@ class Run(Lobotomy):
                     if self.apk:
                         print(self.t.yellow("\n\t--> Loaded : {} (!)\n".format(args.split()[1].split("/")[-1])))
                         self.package = self.apk.get_package()
-                        from core.brains.components import Components
+                        from core.brains.apk.components import Components
                         # Load activies, services, broadcast receivers, and
                         # content providers
                         self.components = Components(self.apk)
@@ -137,7 +137,7 @@ class Run(Lobotomy):
             if self.apk and self.components:
                 if args.split()[0] == "run":
                     self.logger.log("info", "Loading attacksurface module ... ")
-                    from core.brains.attacksurface import AttackSurface
+                    from core.brains.apk.attacksurface import AttackSurface
                     self.attack_surface = AttackSurface(self.apk, self.components)
                     self.attack_surface.run()
             else:
