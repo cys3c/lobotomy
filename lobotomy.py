@@ -1,4 +1,3 @@
-from core.cli.commands import Run
 from sys import exit
 from blessings import Terminal
 import sys
@@ -39,6 +38,7 @@ def main():
 
 if __name__ == "__main__":
     try:
+        from core.cli.commands import Run
         main()
     except ImportError as e:
         raise e
