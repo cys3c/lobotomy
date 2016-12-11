@@ -42,3 +42,4 @@ python lobotomy.py
 (lobotomy)
 ```
 
+See the [docs](https://github.com/rotlogix/lobotomy/tree/master/docs) for more information.
