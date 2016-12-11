@@ -1,5 +1,6 @@
 # Lobotomy
-## Android Reverse Engineering
+## Overview
+Lobotomy is a command line based Android reverse engineering tool. 
 ### Building 
 #### OSX
 
