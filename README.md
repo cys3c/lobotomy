@@ -1,9 +1,13 @@
 # Lobotomy
 ## Overview
 Lobotomy is a command line based Android reverse engineering tool. 
-|__________|____________________________|
-| Version  | Development                |
-| Author   | Benjamin Watson (rotlogix) |      
+
+|         |                            |
+|:--------|:---------------------------| 
+| Version | Development                | 
+| Author  | Benjamin Watson (rotlogix) |
+
+     
 
 ### Building 
 #### OSX
