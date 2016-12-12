@@ -26,13 +26,12 @@ class Surgical(object):
         self.modules = [m for m in self.web, self.intent]
         self.target_module = None
 
-
     def factory(self):
         """
-        The surgical module's main factory function.  Based on the user's selection,
-        this function will return an instance of selected module, and set it as
-        the target module.  This instance will be used by the run() function,
-        when it is called.
+        The surgical module's main factory function.  Based on the user's
+        selection, this function will return an instance of selected module,
+        and set it as the target module.  This instance will be used by the
+        run() function, when it is called.
 
         Args:
             None
@@ -45,7 +44,8 @@ class Surgical(object):
         print("\n")
         while True:
             self.logger.log("info", "Enter 'quit' or 'exit' to leave the surgical module")
-            target = raw_input(self.t.green("[{}] ".format(datetime.now())) + self.t.yellow("Select Module : "))
+            target = raw_input(self.t.green("[{}] ".format(datetime.now())) +
+                               self.t.yellow("Select Module : "))
             if target == "quit" or target == "exit":
                 # Break the loop and return to the main lobotomy menu
                 break
@@ -60,7 +60,6 @@ class Surgical(object):
                     if target == m.name:
                         self.target_module = m
                         self.run()
-
 
     def process_methods(self, found_methods):
         """
@@ -94,12 +93,12 @@ class Surgical(object):
         # Return the processed list of methods
         return processed
 
-
     def analyze_methods(self, processed):
         """
         Provide the ability to analyze each processed method that contains
         the specific API usage.  For each analyzed method, the
-        function will print out the class name, method name, XREF(s), and source
+        function will print out the class name, method name, XREF(s),
+        and source
 
         Args:
             param1 : Processed methods represented as a tuple
@@ -109,14 +108,15 @@ class Surgical(object):
             None
         """
 
-        # TODO There needs to be more fine grained control over methods with the same name,
-        # but different classes
+        # TODO There needs to be more fine grained control over methods with
+        # the same name, but different classes
 
         # Locals
         selection = None
 
         for p in processed:
-            print(self.t.cyan("\t--> {} -> {} ".format(p[0].class_name, p[0].name)))
+            print(self.t.cyan("\t--> {} -> {} ".format(p[0].class_name,
+                                                       p[0].name)))
         print("\n")
         while True:
             self.logger.log("info", "Enter 'back' to return")
@@ -129,7 +129,8 @@ class Surgical(object):
                 # Print the loaded method list
                 print("\n")
                 for p in processed:
-                    print(self.t.cyan("\t--> {} -> {} ".format(p[0].class_name, p[0].name)))
+                    print(self.t.cyan("\t--> {} -> {} ".format(p[0].class_name,
+                                                               p[0].name)))
                 print("\n")
             else:
                 for p in processed:
@@ -142,12 +143,9 @@ class Surgical(object):
                         print(self.t.cyan("\t\t\t --> XREFS ###########"))
                         self.u.print_xref("T", p[1].method.XREFto.items)
                         self.u.print_xref("F", p[1].method.XREFfrom.items)
-                        # Print code_object
-                        #print(p[0].code.code.pretty_show(p[1]))
                         print("\n")
                         # Print source_code
                         print(highlight(p[2], JavaLexer(), TerminalFormatter()))
-
 
     def run(self):
         """
@@ -205,17 +203,21 @@ class Surgical(object):
                                             # Method's class
                                             if method.get_class_name() == p.get_src(self.vm.get_class_manager())[0]:
                                                 found_methods.append(method)
-                                # If we have a populated list of found methods, process them
+                                # If we have a populated list of found methods,
+                                # process them
                                 if found_methods:
                                     self.logger.log("info", "Processing ...")
-                                    # Return a unique and analyzed list of methods that were found with API usage
+                                    # Return a unique and analyzed list of
+                                    # methods that were found with API usage
                                     processed = self.process_methods(found_methods)
                                     print(self.t.yellow("\n\t--> Finished processing (!)\n".format(m)))
                                     if processed:
                                         self.analyze_methods(processed)
                                 else:
-                                    self.logger.log("warn", "Error with processing results (!)")
+                                    self.logger.log("warn",
+                                                    "Error with processing results (!)")
                             else:
-                                self.logger.log("warn", "Zero results found (!)")
+                                self.logger.log("warn",
+                                                "Zero results found (!)")
                         else:
                             self.logger.log("warn", "Method not found (!)")
