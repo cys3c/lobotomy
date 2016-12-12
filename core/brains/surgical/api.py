@@ -189,33 +189,34 @@ class Surgical(object):
                 print("\n")
             else:
                 for k, v in self.target_module.model.values.items():
-                    if k:
-                        for m in v:
-                            if m == selection:
-                                self.logger.log("info", "Searching ...")
-                                # If the selected method is in the API list, search for it in all tainted_packages
-                                paths = self.vmx.get_tainted_packages().search_methods(k, selection, ".")
-                                if paths:
-                                    self.logger.log("info", "Found usage (!)")
-                                    for p in paths:
-                                        # For path in tainted_paths populated a list of methods with the target
-                                        # API usage
-                                        for method in self.methods:
-                                            # Name of the method
-                                            if method.get_name() == p.get_src(self.vm.get_class_manager())[1]:
-                                                # Method's class
-                                                if method.get_class_name() == p.get_src(self.vm.get_class_manager())[0]:
-                                                    found_methods.append(method)
-                                    # If we have a populated list of found methods, process them
-                                    if found_methods:
-                                        self.logger.log("info", "Processing ...")
-                                        # Return a unique and analyzed list of methods that were found with API usage
-                                        processed = self.process_methods(found_methods)
-                                        print(self.t.yellow("\n\t--> Finished processing (!)\n".format(m)))
-                                        if processed:
-                                            # If the method has been processed, then analyze it
-                                            self.analyze_methods(processed)
-                                    else:
-                                        self.logger.log("warn", "Error with processing results (!)")
+                    for m in v:
+                        if m == selection:
+                            self.logger.log("info", "Searching ...")
+                            # If the selected method is in the API list, search for it in all tainted_packages
+                            paths = self.vmx.get_tainted_packages().search_methods(k, selection, ".")
+                            if paths:
+                                self.logger.log("info", "Found usage (!)")
+                                for p in paths:
+                                    # For path in tainted_paths populated a list of methods with the target
+                                    # API usage
+                                    for method in self.methods:
+                                        # Name of the method
+                                        if method.get_name() == p.get_src(self.vm.get_class_manager())[1]:
+                                            # Method's class
+                                            if method.get_class_name() == p.get_src(self.vm.get_class_manager())[0]:
+                                                found_methods.append(method)
+                                # If we have a populated list of found methods, process them
+                                if found_methods:
+                                    self.logger.log("info", "Processing ...")
+                                    # Return a unique and analyzed list of methods that were found with API usage
+                                    processed = self.process_methods(found_methods)
+                                    print(self.t.yellow("\n\t--> Finished processing (!)\n".format(m)))
+                                    if processed:
+                                        # If the method has been processed, then analyze it
+                                        self.analyze_methods(processed)
                                 else:
-                                    self.logger.log("warn", "Zero results found (!)")
+                                    self.logger.log("warn", "Error with processing results (!)")
+                            else:
+                                self.logger.log("warn", "Zero results found (!)")
+                        else:
+                            self.logger.log("warn", "Method not found (!)")
