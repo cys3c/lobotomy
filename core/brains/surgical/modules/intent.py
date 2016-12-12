@@ -1,7 +1,7 @@
 
 class IntentModel:
     values = {
-        "android.content.Intent" : [
+        "android.content.Intent": [
             "parseUri",
             "getAction",
             "getBundleExtra",

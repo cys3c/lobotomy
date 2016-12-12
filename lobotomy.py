@@ -5,6 +5,7 @@ reload(sys)
 sys.setdefaultencoding("utf-8")
 t = Terminal()
 
+
 def banner():
     """
     ASCII Banner
@@ -26,6 +27,8 @@ def banner():
  :W##########Wt   t     jLLLLLLLLL;   t        fE        t     ...      #G      ..  EE.
  :,,,,,,,,,,,,,.                                :                       j           t
           """))
+
+
 def main():
     # Print the ASCII banner
     banner()

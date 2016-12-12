@@ -2,7 +2,6 @@ from cmd2 import Cmd as Lobotomy
 from core.logging.logger import Logger
 from blessings import Terminal
 from core.brains.utilities.util import Util
-import os.path
 
 
 class CommandError(Exception):
@@ -31,7 +30,6 @@ class Run(Lobotomy):
         self.files = None
         self.attack_surface = None
 
-
     def find_dex(self):
         """
         Return True is classes.dex is found within the target APK
@@ -41,7 +39,6 @@ class Run(Lobotomy):
                 if "classes" in f:
                     return True
                     break
-
 
     def process_vm(self):
         """
@@ -85,7 +82,6 @@ class Run(Lobotomy):
         else:
             CommandError("classes.dex not found (!)")
 
-
     def do_operate(self, args):
         """
         := operate apk path_to_apk
@@ -119,12 +115,11 @@ class Run(Lobotomy):
         except IndexError as e:
             CommandError("Not enough arguments (!)")
 
-
     def do_surgical(self, args):
         """
         := surgical run
         """
-        class_methods = list()
+
         try:
             if self.vm and self.vmx:
                 if args.split()[0] == "run":
@@ -137,7 +132,6 @@ class Run(Lobotomy):
                 CommandError("classes.dex not loaded (!)")
         except Exception as e:
             CommandError(e)
-
 
     def do_attacksurface(self, args):
         """
@@ -155,7 +149,6 @@ class Run(Lobotomy):
         except ImportError as e:
             CommandError(e)
 
-
     def do_permissions(self, args):
         """
         := permissions list
@@ -171,7 +164,6 @@ class Run(Lobotomy):
                 CommandError("Permissions not found (!)")
         except Exception as e:
             CommandError(e)
-
 
     def do_files(self, args):
         """
@@ -214,7 +206,6 @@ class Run(Lobotomy):
         except Exception as e:
             CommandError(e)
 
-
     def do_strings(self, args):
         """
         := strings list
@@ -242,7 +233,6 @@ class Run(Lobotomy):
         except Exception as e:
             CommandError(e)
 
-
     def do_components(self, args):
         """
         := components list
@@ -250,7 +240,8 @@ class Run(Lobotomy):
         try:
             if self.apk:
                 if args.split()[0] == "list":
-                    self.logger.log("info", "Enumerating components ...\n".format(args.split()[0]))
+                    self.logger.log("info",
+                                    "Enumerating components ...\n".format(args.split()[0]))
                     if self.components.activities:
                         for a in self.components.activities:
                             print(self.t.yellow("\t--> activity : {}".format(a)))
