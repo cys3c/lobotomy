@@ -212,7 +212,6 @@ class Surgical(object):
                                     processed = self.process_methods(found_methods)
                                     print(self.t.yellow("\n\t--> Finished processing (!)\n".format(m)))
                                     if processed:
-                                        # If the method has been processed, then analyze it
                                         self.analyze_methods(processed)
                                 else:
                                     self.logger.log("warn", "Error with processing results (!)")
