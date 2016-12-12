@@ -2,6 +2,7 @@ from cmd2 import Cmd as Lobotomy
 from core.logging.logger import Logger
 from blessings import Terminal
 from core.brains.utilities.util import Util
+import os.path
 
 
 class CommandError(Exception):
@@ -21,6 +22,7 @@ class Run(Lobotomy):
         self.package = None
         self.vm = None
         self.vmx = None
+        self.gmx = None
         self.components = None
         self.dex = None
         self.strings = None
@@ -55,10 +57,12 @@ class Run(Lobotomy):
         if self.find_dex():
             self.dex = self.apk.get_dex()
             # Analyze classes.dex
+            # TODO Throw in a progress bar, this can take awhile
             if self.dex:
                 self.logger.log("info", "Loading classes.dex ...")
                 from androguard.core.bytecodes.dvm import DalvikVMFormat
                 from androguard.core.analysis.analysis import VMAnalysis
+                from androguard.core.analysis.ganalysis import GVMAnalysis
                 # Create a new virtual machine instance
                 self.vm = DalvikVMFormat(self.dex)
                 if self.vm:
@@ -66,8 +70,14 @@ class Run(Lobotomy):
                     self.logger.log("info", "Analyzing classes.dex ...")
                     # Analyze the virtual machine instance
                     self.vmx = VMAnalysis(self.vm)
-                    if self.vmx:
+                    self.gmx = GVMAnalysis(self.vmx, None)
+                    if self.vmx and self.gmx:
                         print(self.t.yellow("\n\t--> Analyzed classes.dex (!)\n"))
+                        self.vm.set_vmanalysis(self.vmx)
+                        self.vm.set_gvmanalysis(self.gmx)
+                        # Generate xref(s)
+                        self.vm.create_xref()
+                        self.vm.create_dref()
                     else:
                         CommandError("Cannot analyze VM instance (!)")
                 else:
@@ -120,7 +130,7 @@ class Run(Lobotomy):
                 if args.split()[0] == "run":
                     from core.brains.surgical.api import Surgical
                     surgical = Surgical(self.vm, self.vmx, self.package)
-                    surgical.run()
+                    surgical.factory()
                 else:
                     CommandError("Unknown command (!)")
             else:

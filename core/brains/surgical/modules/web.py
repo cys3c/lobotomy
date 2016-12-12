@@ -69,7 +69,7 @@ class WebModule(object):
         return processed
 
 
-    def analyze_method(self, processed):
+    def analyze_methods(self, processed):
         """
         Provide the ability to analyze each processed method that contains
         the specific API usage.
@@ -181,7 +181,7 @@ class WebModule(object):
                                         print(self.t.yellow("\n\t--> Finished processing (!)\n".format(m)))
                                         if processed:
                                             # If the method has been processed, then analyze it
-                                            self.analyze_method(processed)
+                                            self.analyze_methods(processed)
                                     else:
                                         self.logger.log("warn", "Error with processing results (!)")
                                 else:
