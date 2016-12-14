@@ -294,3 +294,8 @@ class Run(Lobotomy):
                 CommandError("classes.dex not loaded (!)")
         except Exception as e:
             CommandError(e.message)
+
+    def do_macro(self, args):
+        """
+        """
+        return
