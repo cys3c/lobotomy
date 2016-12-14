@@ -1,13 +1,13 @@
 from core.logging.logger import Logger
 from blessings import Terminal
-from core.brains.components import Components
-from xml.dom import DOMException
+
 
 class AttackSurfaceError(Exception):
     def __init__(self, message):
         self.logger = Logger()
         self.message = message
-        self.logger.log("critical", self.message)
+        self.logger.log("critical", "AttackSurface : {}".format(self.message))
+
 
 class AttackSurface(object):
     def __init__(self, apk, components):
@@ -154,7 +154,7 @@ class AttackSurface(object):
                 for receiver in self.xml_receivers:
                     # Match the element name with the component name
                     if receiver.getAttribute("android:name") == r \
-                        or receiver.getAttribute("android.name").split(".")[-1] == r.split(".")[-1]:
+                            or receiver.getAttribute("android.name").split(".")[-1] == r.split(".")[-1]:
                         # Find the android:exported element attribute
                         if receiver.getAttribute("android:exported"):
                             # Determine if the attribute is set to true
@@ -232,7 +232,7 @@ class AttackSurface(object):
                         else:
                             print(self.t.yellow("\n\t--> service : {}".format(s)))
                             if service.getAttribute("android:permission"):
-                                print(self.t.red("\t\t--> permission : {}".format(receiver.getAttribute("android:permission"))))
+                                print(self.t.red("\t\t--> permission : {}".format(service.getAttribute("android:permission"))))
                             filters = self.apk.get_intent_filters("service", s)
                             if filters:
                                 # Enumerate the intent filter's action and category
@@ -258,7 +258,7 @@ class AttackSurface(object):
                 for provider in self.xml_providers:
                     # Match the element name with the component name
                     if provider.getAttribute("android:name") == p \
-                        or provider.getAttribute("android.name").split(".")[-1] == p.split(".")[-1]:
+                            or provider.getAttribute("android.name").split(".")[-1] == p.split(".")[-1]:
                         # Find the android:exported element attribute
                         if provider.getAttribute("android:exported"):
                             # Determine if the attribute is set to true

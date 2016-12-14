@@ -140,7 +140,7 @@ class Run(Lobotomy):
 
     def do_attacksurface(self, args):
         """
-        := attacksurface run
+        := attacksurface
         """
         try:
             if self.apk and self.components:

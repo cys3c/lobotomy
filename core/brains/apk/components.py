@@ -1,11 +1,13 @@
 from core.logging.logger import Logger
 from blessings import Terminal
 
+
 class ComponentsError(Exception):
     def __init__(self, message):
         self.logger = Logger()
         self.message = message
-        self.logger.log("critical", self.message)
+        self.logger.log("critical", "Components : {}".format(self.message))
+
 
 class Components(object):
     def __init__(self, apk):
@@ -30,7 +32,7 @@ class Components(object):
         """
         # TODO List comprehension
         # This is ugly fucking code ...
-        self.logger.log("info", "Loading components ....")
+        self.logger.log("info", "Loading components ...")
         try:
             if self.apk.get_activities():
                 for a in self.apk.get_activities():
@@ -53,6 +55,6 @@ class Components(object):
                 if self.providers:
                     print(self.t.yellow("\t--> Loaded providers (!)"))
             print("\n")
-            self.logger.log("info", "Finished loading components ....")
+            self.logger.log("info", "Finished loading components ...")
         except Exception as e:
-            ComponentsError(e)
+            ComponentsError(e.message)

@@ -63,8 +63,8 @@ class Run(SurgicalCmd):
 
         := api list
         := api select
-        := api analyze list
-        := api analyze select
+        := api analyzed list
+        := api analyzed select
         """
         try:
             # List the available API methods from the target module
@@ -93,7 +93,7 @@ class Run(SurgicalCmd):
                             else:
                                 self.logger.surgical_log("warn", "Method not found (!)")
             # Analyze the processed method list
-            elif args.split()[0] == "analyze":
+            elif args.split()[0] == "analyzed":
                 # List the methods that have been processed
                 if args.split()[1] == "list":
                     if self.methods_api_usage:
