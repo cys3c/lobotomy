@@ -19,6 +19,11 @@ class Components(object):
         self.receivers = list()
         self.providers = list()
 
+    def sort_unique(self):
+        """
+        """
+        return
+
     def enumerate_components(self):
         """
         Enumerate the activities, broadcast receivers, services, and

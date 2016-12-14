@@ -209,7 +209,7 @@ class AttackSurface(object):
                 for service in self.xml_services:
                     # Match the element name with the component name
                     if service.getAttribute("android:name") == s \
-                        or service.getAttribute("android.name").split(".")[-1] == s.split(".")[-1]:
+                            or service.getAttribute("android.name").split(".")[-1] == s.split(".")[-1]:
                         # Find the android:exported element attribute
                         if service.getAttribute("android:exported"):
                             # Determine if the attribute is set to true

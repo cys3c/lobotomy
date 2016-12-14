@@ -207,29 +207,45 @@ class Run(Lobotomy):
 
     def do_strings(self, args):
         """
+        List and search for strings found in classes.dex
+
         := strings list
         := strings search
         """
+
+        # Locals
+        strings = None
+
         try:
-            if self.vm:
-                strings = self.vm.get_strings()
-                if strings:
-                    if args.split()[0] == "list":
+            if args.split()[0] == "list":
+                if self.vm:
+                    strings = self.vm.get_strings()
+                    if strings:
                         for s in strings:
-                            print(self.t.yellow("\t{}".format(s.encode("utf-8"))))
-                    if args.split()[0] == "search":
+                            print(self.t.cyan("--> {}".format(s.encode("utf-8"))))
+                    else:
+                        CommandError("Strings not found (!)")
+                else:
+                    CommandError("classes.dex not loaded (!)")
+            elif args.split()[0] == "search":
+                if self.vm:
+                    strings = self.vm.get_strings()
+                    if strings:
                         target = raw_input(self.t.yellow("\n\t--> Enter string : \n"))
                         for s in strings:
                             if target in s:
                                 print(self.t.cyan("\t\t --> {}".format(s)))
                         print("\n")
                     else:
-                        CommandError("Command not found (!)")
+                        CommandError("Strings not found (!)")
                 else:
-                    CommandError("Strings not found (!)")
+                    CommandError("classes.dex not loaded (!)")
             else:
-                CommandError("Could not find classes.dex (!)")
+                CommandError("Command not found (!)")
         except Exception as e:
+            # We might be see an exception like this:
+            # 'utf8' codec can't decode byte 0xc0 in position 0: invalid start byte
+            raise e
             CommandError(e.message)
 
     def do_components(self, args):
@@ -237,9 +253,9 @@ class Run(Lobotomy):
         := components list
         """
         try:
-            if self.apk:
-                if args.split()[0] == "list":
-                    self.logger.log("info", "Enumerating components ...\n".format(args.split()[0]))
+            if args.split()[0] == "list":
+                if self.apk:
+                    self.logger.log("info", "Enumerating components ...\n")
                     if self.components.activities:
                         for a in self.components.activities:
                             print(self.t.yellow("\t--> activity : {}".format(a)))
@@ -256,7 +272,25 @@ class Run(Lobotomy):
                         for r in self.components.providers:
                             print(self.t.yellow("\t--> provider : {}".format(s)))
                         print("\n")
+                else:
+                    CommandError("APK not loaded (!)")
             else:
-                CommandError("APK not loaded (!)")
+                CommandError("Command not found (!)")
+        except Exception as e:
+            CommandError(e.message)
+
+    def do_interact(self, args):
+        """
+        Drop into an interactive IPython session.
+
+        := interact
+        """
+        try:
+            if self.vm and self.vmx:
+                from core.brains.interact.interact import Interact
+                i = Interact(self.vm, self.vmx)
+                i.run()
+            else:
+                CommandError("classes.dex not loaded (!)")
         except Exception as e:
             CommandError(e.message)
