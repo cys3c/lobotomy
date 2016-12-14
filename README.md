@@ -26,6 +26,7 @@ Lobotomy is a command line based Android reverse engineering tool.
 |Interact|Drop into an IPython session to analyze the target application in a more granular fashion|
 |Decompile|Decompile the target application with ```Apktool```|
 |Debuggable|Convert the target application into being debuggable when installed on a device|
+|Dextra|Wrapper around ```dextra``` for dumping ```odex``` and ```oat``` files|
 
 
 ### Building 
