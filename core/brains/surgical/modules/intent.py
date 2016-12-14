@@ -19,6 +19,6 @@ class IntentModel:
 
 
 class IntentModule(object):
-    def __init__(self, vm, vmx, package):
+    def __init__(self):
         self.name = "intent"
         self.model = IntentModel()

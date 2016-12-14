@@ -8,7 +8,7 @@ class CommandError(Exception):
     def __init__(self, message):
         self.logger = Logger()
         self.message = message
-        self.logger.log("critical", self.message)
+        self.logger.log("critical", "Command : {}".format(self.message))
 
 
 class Run(Lobotomy):
@@ -32,7 +32,13 @@ class Run(Lobotomy):
 
     def find_dex(self):
         """
-        Return True is classes.dex is found within the target APK
+        Return True is classes.dex is found within the target APK.
+
+        Args:
+            None
+
+        Returns:
+            None
         """
         if self.files:
             for f in self.files:
@@ -111,27 +117,26 @@ class Run(Lobotomy):
             else:
                 CommandError("Unkown command (!)")
         except ImportError as e:
-            CommandError(e)
+            CommandError(e.message)
         except IndexError as e:
             CommandError("Not enough arguments (!)")
 
     def do_surgical(self, args):
         """
-        := surgical run
+        := surgical
         """
 
         try:
             if self.vm and self.vmx:
-                if args.split()[0] == "run":
-                    from core.brains.surgical.api import Surgical
-                    surgical = Surgical(self.vm, self.vmx, self.package)
-                    surgical.factory()
-                else:
-                    CommandError("Unknown command (!)")
+                from .surgical import Run
+                run = Run(self.vm, self.vmx)
+                run.prompt = self.t.yellow("(surgical) ")
+                run.ruler = self.t.yellow("-")
+                run.cmdloop()
             else:
                 CommandError("classes.dex not loaded (!)")
         except Exception as e:
-            CommandError(e)
+            CommandError(e.message)
 
     def do_attacksurface(self, args):
         """
@@ -139,15 +144,12 @@ class Run(Lobotomy):
         """
         try:
             if self.apk and self.components:
-                if args.split()[0] == "run":
-                    self.logger.log("info", "Loading attacksurface module ... ")
-                    from core.brains.apk.attacksurface import AttackSurface
-                    self.attack_surface = AttackSurface(self.apk, self.components)
-                    self.attack_surface.run()
-            else:
-                CommandError("Components not found (!)")
+                self.logger.log("info", "Loading attacksurface module ...")
+                from core.brains.apk.attacksurface import AttackSurface
+                self.attack_surface = AttackSurface(self.apk, self.components)
+                self.attack_surface.run()
         except ImportError as e:
-            CommandError(e)
+            CommandError(e.message)
 
     def do_permissions(self, args):
         """
@@ -163,48 +165,45 @@ class Run(Lobotomy):
             else:
                 CommandError("Permissions not found (!)")
         except Exception as e:
-            CommandError(e)
+            CommandError(e.message)
 
     def do_files(self, args):
         """
-        := files list
-        := files list assets
-        := files list libs
-        := files list res
+        := files all
+        := files assets
+        := files libs
+        := files res
         """
         try:
             if self.files:
-                if args.split()[0] == "list":
-                    if args.split()[1] == "assets":
+                if args.split()[0]:
+                    if args.split()[0] == "assets":
                         self.logger.log("info", "Loading files ... \n")
                         for f in self.files:
                             if f.startswith("assets"):
                                 print(self.t.yellow("\t--> {}".format(f)))
                         print("\n")
-                    elif args.split()[1] == "libs":
+                    elif args.split()[0] == "libs":
                         self.logger.log("info", "Loading files ... \n")
                         for f in self.files:
                             if f.startswith("lib"):
                                 print(self.t.yellow("\t--> {}".format(f)))
                         print("\n")
-                    elif args.split()[1] == "res":
+                    elif args.split()[0] == "res":
                         self.logger.log("info", "Loading files ... \n")
                         for f in self.files:
                             if f.startswith("res"):
                                 print(self.t.yellow("\t--> {}".format(f)))
                         print("\n")
-                    else:
+                    elif args.split()[0] == "all":
+                        self.logger.log("info", "Loading files ... \n")
                         for f in self.files:
                             print(self.t.yellow("\t--> {}".format(f)))
-                else:
-                    self.logger.log("info", "Loading files ... \n")
-                    for f in self.files:
-                        print(self.t.yellow("\t--> {}".format(f)))
-                    print("\n")
+                        print("\n")
             else:
                 CommandError("Files not populated (!)")
         except Exception as e:
-            CommandError(e)
+            CommandError(e.message)
 
     def do_strings(self, args):
         """
@@ -231,7 +230,7 @@ class Run(Lobotomy):
             else:
                 CommandError("Could not find classes.dex (!)")
         except Exception as e:
-            CommandError(e)
+            CommandError(e.message)
 
     def do_components(self, args):
         """
@@ -240,8 +239,7 @@ class Run(Lobotomy):
         try:
             if self.apk:
                 if args.split()[0] == "list":
-                    self.logger.log("info",
-                                    "Enumerating components ...\n".format(args.split()[0]))
+                    self.logger.log("info", "Enumerating components ...\n".format(args.split()[0]))
                     if self.components.activities:
                         for a in self.components.activities:
                             print(self.t.yellow("\t--> activity : {}".format(a)))
@@ -261,4 +259,4 @@ class Run(Lobotomy):
             else:
                 CommandError("APK not loaded (!)")
         except Exception as e:
-            CommandError(e)
+            CommandError(e.message)

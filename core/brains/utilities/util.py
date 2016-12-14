@@ -1,5 +1,6 @@
 from blessings import Terminal
 
+
 class Util(object):
     def __init__(self):
         self.t = Terminal()
