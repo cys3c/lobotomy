@@ -47,6 +47,23 @@ pip install -r requirements
 cd core/include/androguard
 python setup.py install
 ```
+#### Building python-adb
+```
+brew install openssl
+```
+```
+brew install swig
+```
+```
+env LDFLAGS="-L$(brew --prefix openssl)/lib" \
+CFLAGS="-I$(brew --prefix openssl)/include" \
+SWIG_FEATURES="-cpperraswarn -includeall -I$(brew --prefix openssl)/include" \
+pip install m2crypto
+```
+```
+/lobotomy/core/include/python-adb]> python setup.py install
+```
+
 ### Running
 #### OSX
 ```bash
