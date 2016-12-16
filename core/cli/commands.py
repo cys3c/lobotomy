@@ -319,15 +319,12 @@ class Run(Lobotomy):
                 for f in listdir(macro):
                     if selection == f:
                         with open("".join([macro, "/", f]), "rb") as config:
-                            # Read config.json and cover to JSON
                             json = loads(config.read())
                             if json:
                                 for k, v in json.items():
                                     if k == "apk":
-                                        # Make sure we value for the apk key
                                         if v:
                                             apk_path = str(v)
-                                            # Start operation
                                             self.do_operate("apk {}".format(apk_path))
                                             # TODO Add support for debuggable and decompilation modules
                                             break
