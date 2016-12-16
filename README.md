@@ -15,7 +15,20 @@ Lobotomy is a command line based Android reverse engineering tool.
     </tr>
 </table>
 
-     
+    
+|Feature|Description|
+|:------|-----------|
+|Components|Enumerate AndroidManifest.xml components|
+|Permission|Enumerate declared and used ```AndroidManifest.xml``` permissions|
+|Strings   |List and search for strings within the target application|
+|AttackSurface|Enumerate the target Application's attack surface through parsing the ```AndroidManifest.xml```|
+|Surgical|Find specific Android API usage throughout the application|
+|Interact|Drop into an IPython session to analyze the target application in a more granular fashion|
+|Decompile|Decompile the target application with ```Apktool```|
+|Debuggable|Convert the target application into being debuggable when installed on a device|
+|Dextra|Wrapper around ```dextra``` for dumping ```odex``` and ```oat``` files|
+|Socket|Find local and listening sockets on a target Android device|
+
 
 ### Building 
 #### OSX
@@ -34,6 +47,23 @@ pip install -r requirements
 cd core/include/androguard
 python setup.py install
 ```
+#### Building python-adb
+```
+brew install openssl
+```
+```
+brew install swig
+```
+```
+env LDFLAGS="-L$(brew --prefix openssl)/lib" \
+CFLAGS="-I$(brew --prefix openssl)/include" \
+SWIG_FEATURES="-cpperraswarn -includeall -I$(brew --prefix openssl)/include" \
+pip install m2crypto
+```
+```
+/lobotomy/core/include/python-adb]> python setup.py install
+```
+
 ### Running
 #### OSX
 ```bash
