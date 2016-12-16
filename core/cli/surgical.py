@@ -5,6 +5,7 @@ from datetime import datetime
 from core.brains.utilities.util import Util
 from core.brains.surgical.modules.intent import IntentModule
 from core.brains.surgical.modules.zip import ZipModule
+from core.brains.surgical.modules.socket import SocketModule
 from pygments import highlight
 from pygments.lexers import JavaLexer
 from pygments.formatters import TerminalFormatter
@@ -28,7 +29,8 @@ class Run(SurgicalCmd):
         self.methods = self.vm.get_methods()
         self.intent = IntentModule()
         self.zip = ZipModule()
-        self.modules = [m for m in self.zip, self.intent]
+        self.socket = SocketModule()
+        self.modules = [m for m in self.zip, self.intent, self.socket]
         self.target_module = None
         self.methods_api_usage = list()
 
@@ -39,6 +41,10 @@ class Run(SurgicalCmd):
         := modules list
         := modules select
         """
+
+        # Locals
+        selection = None
+
         try:
             if args.split()[0] == "list":
                 if self.modules:
@@ -67,6 +73,12 @@ class Run(SurgicalCmd):
         := api analyzed list
         := api analyzed select
         """
+
+        # Locals
+        class_selection = None
+        method_selection = None
+        surgical_lib = None
+
         try:
             # List the available API methods from the target module
             if args.split()[0] == "list":
@@ -84,27 +96,33 @@ class Run(SurgicalCmd):
             # Select an API method from the target module
             elif args.split()[0] == "select":
                 if self.target_module:
-                    selection = raw_input(self.t.yellow("[{}] ".format(datetime.now())) + "Select method : ")
+                    # TODO Consider building a wrapper around raw_input()
+                    class_selection = raw_input(self.t.yellow("[{}] ".format(datetime.now())) + "Select class : ")
+                    method_selection = raw_input(self.t.yellow("[{}] ".format(datetime.now())) + "Select method : ")
                     for k, v in self.target_module.model.values.items():
-                        for m in v:
-                            if m == selection:
-                                self.logger.surgical_log("info",
-                                                         "Searching ...")
-                                from core.brains.surgical.lib.libsurgical import SurgicalLib
-                                # Begin processing and return the results from
-                                # the selected method
-                                surgical_lib = SurgicalLib(self.target_module,
-                                                           self.vmx,
-                                                           self.vm,
-                                                           k,
-                                                           selection,
-                                                           self.methods)
-                                # methods_api_usage will contain a list of
-                                # tuples
-                                self.methods_api_usage = surgical_lib.search()
-                            else:
-                                self.logger.surgical_log("warn",
-                                                         "Method not found (!)")
+                        # This is so we can support classes with identical
+                        # method names --> Ex: java.util.zip.ZipFile
+                        if class_selection == k.split(".")[-1]:
+                            print(k)
+                            for m in v:
+                                if m == method_selection:
+                                    self.logger.surgical_log("info",
+                                                             "Analyzing ...")
+                                    from core.brains.surgical.lib.libsurgical import SurgicalLib
+                                    # Begin processing and return the results
+                                    # from the selected api
+                                    surgical_lib = SurgicalLib(self.target_module,
+                                                               self.vmx,
+                                                               self.vm,
+                                                               k,
+                                                               method_selection,
+                                                               self.methods)
+                                    # methods_api_usage will contain a list of
+                                    # tuples
+                                    self.methods_api_usage = surgical_lib.search()
+                                else:
+                                    self.logger.surgical_log("warn",
+                                                             "Method not found (!)")
             # Analyze the processed method list
             elif args.split()[0] == "analyzed":
                 # List the methods that have been processed
@@ -118,7 +136,6 @@ class Run(SurgicalCmd):
                         print("\n")
                     else:
                         SurgicalError("API usage not found (!)")
-                        SurgicalError("Try running --> 'api select' again (!)")
                 # Select from the processed method list
                 elif args.split()[1] == "select":
                     if self.methods_api_usage:
@@ -139,6 +156,5 @@ class Run(SurgicalCmd):
                                                 TerminalFormatter()))
                     else:
                         SurgicalError("API usage not found (!)")
-                        SurgicalError("Try running --> 'api select' again (!)")
         except Exception as e:
             SurgicalError(e.message)
