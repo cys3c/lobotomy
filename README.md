@@ -49,6 +49,7 @@ SWIG_FEATURES="-cpperraswarn -includeall -I$(brew --prefix openssl)/include" \
 **Create a Python Virtual Environment for Lobotomy** 
 ```
 virtualenv -p /usr/bin/python2.7 lobotomy
+cd lobotomy/
 source bin/activate
 ```
 **Install the PIP Requirements** 
