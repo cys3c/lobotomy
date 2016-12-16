@@ -1,5 +1,0 @@
-{
-  "apk":"/path/to/apk",
-  "decompile":"yes",
-  "debuggable":"yes"
-}

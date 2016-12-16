@@ -99,11 +99,14 @@ class Run(Lobotomy):
         try:
             if args.split()[0] == "apk":
                 if args.split()[1]:
-                    self.logger.log("info", "Loading : {} ...".format(args.split()[1].split("/")[-1]))
+                    self.logger.log("info", "Loading : {} ..."
+                                    .format(args.split()[1].split("/")[-1]))
                     from androguard.core.bytecodes.apk import APK
                     self.apk = APK(args.split()[1])
                     if self.apk:
-                        print(self.t.yellow("\n\t--> Loaded : {} (!)\n".format(args.split()[1].split("/")[-1])))
+                        print(self.t.yellow("\n\t--> Loaded : {} (!)\n"
+                                            .format(args.split()[1]
+                                                    .split("/")[-1])))
                         self.package = self.apk.get_package()
                         from core.brains.apk.components import Components
                         # Load activies, services, broadcast receivers, and
@@ -225,7 +228,8 @@ class Run(Lobotomy):
                     strings = self.vm.get_strings()
                     if strings:
                         for s in strings:
-                            print(self.t.cyan("--> {}".format(s.encode("utf-8"))))
+                            print(self.t.cyan("--> {}"
+                                              .format(s.encode("utf-8"))))
                     else:
                         CommandError("Strings not found (!)")
                 else:
@@ -247,7 +251,8 @@ class Run(Lobotomy):
                 CommandError("Command not found (!)")
         except Exception as e:
             # We might be see an exception like this:
-            # 'utf8' codec can't decode byte 0xc0 in position 0: invalid start byte
+            # 'utf8' codec can't decode byte 0xc0 in position 0:
+            # invalid start byte
             raise e
             CommandError(e.message)
 
@@ -261,19 +266,23 @@ class Run(Lobotomy):
                     self.logger.log("info", "Enumerating components ...\n")
                     if self.components.activities:
                         for a in self.components.activities:
-                            print(self.t.yellow("\t--> activity : {}".format(a)))
+                            print(self.t.yellow("\t--> activity : {}"
+                                                .format(a)))
                         print("\n")
                     if self.components.services:
                         for s in self.components.services:
-                            print(self.t.yellow("\t--> service : {}".format(s)))
+                            print(self.t.yellow("\t--> service : {}"
+                                                .format(s)))
                         print("\n")
                     if self.components.receivers:
                         for r in self.components.receivers:
-                            print(self.t.yellow("\t--> receiver : {}".format(s)))
+                            print(self.t.yellow("\t--> receiver : {}"
+                                                .format(s)))
                         print("\n")
                     if self.components.providers:
                         for r in self.components.providers:
-                            print(self.t.yellow("\t--> provider : {}".format(s)))
+                            print(self.t.yellow("\t--> provider : {}"
+                                                .format(s)))
                         print("\n")
                 else:
                     CommandError("APK not loaded (!)")
@@ -319,20 +328,28 @@ class Run(Lobotomy):
                 for f in listdir(macro):
                     if selection == f:
                         with open("".join([macro, "/", f]), "rb") as config:
+                            # Load the config as JSON
                             json = loads(config.read())
                             if json:
                                 for k, v in json.items():
                                     if k == "apk":
                                         if v:
                                             apk_path = str(v)
-                                            self.do_operate("apk {}".format(apk_path))
-                                            # TODO Add support for debuggable and decompilation modules
+                                            # Call operate() with the path to
+                                            # the apk
+                                            self.do_operate("apk {}"
+                                                            .format(apk_path))
+                                            # TODO Add support for debuggable
+                                            # and decompilation modules
                                             break
                                         else:
-                                            CommandError("Path to APK not found in {}".format(selection))
+                                            CommandError("Path to APK not found in {}"
+                                                         .format(selection))
                             else:
-                                CommandError("Error loading {} as JSON".format(selection))
+                                CommandError("Error loading {} as JSON"
+                                             .format(selection))
                     else:
-                        CommandError("{} not found in the macro directory (!)".format(selection))
+                        CommandError("{} not found in the macro directory (!)"
+                                     .format(selection))
         except Exception as e:
             CommandError(e)

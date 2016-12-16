@@ -28,7 +28,7 @@ class Run(SurgicalCmd):
         self.methods = self.vm.get_methods()
         self.intent = IntentModule()
         self.zip = ZipModule()
-        self.modules = [m for m in self.web, self.intent]
+        self.modules = [m for m in self.zip, self.intent]
         self.target_module = None
         self.methods_api_usage = list()
 
@@ -73,8 +73,11 @@ class Run(SurgicalCmd):
                 if self.target_module:
                     print("\n")
                     for k, v in self.target_module.model.values.items():
+                        print("\n")
                         for m in v:
-                            print(self.t.cyan("\t--> {} : {}".format(self.target_module.name, m)))
+                            print(self.t.cyan("\t--> {} : {} : {}"
+                                              .format(self.target_module.name,
+                                                      k.split(".")[-1], m)))
                     print("\n")
                 else:
                     self.logger.surgical_log("info", "Target module has not been loaded (!)")
@@ -85,14 +88,23 @@ class Run(SurgicalCmd):
                     for k, v in self.target_module.model.values.items():
                         for m in v:
                             if m == selection:
-                                self.logger.surgical_log("info", "Searching ...")
+                                self.logger.surgical_log("info",
+                                                         "Searching ...")
                                 from core.brains.surgical.lib.libsurgical import SurgicalLib
-                                # Begin processing and return the results fomr the selected method
-                                surgical_lib = SurgicalLib(self.target_module, self.vmx, self.vm, k, selection, self.methods)
-                                # methods_api_usage will contain a list of tuples
+                                # Begin processing and return the results from
+                                # the selected method
+                                surgical_lib = SurgicalLib(self.target_module,
+                                                           self.vmx,
+                                                           self.vm,
+                                                           k,
+                                                           selection,
+                                                           self.methods)
+                                # methods_api_usage will contain a list of
+                                # tuples
                                 self.methods_api_usage = surgical_lib.search()
                             else:
-                                self.logger.surgical_log("warn", "Method not found (!)")
+                                self.logger.surgical_log("warn",
+                                                         "Method not found (!)")
             # Analyze the processed method list
             elif args.split()[0] == "analyzed":
                 # List the methods that have been processed
@@ -100,7 +112,9 @@ class Run(SurgicalCmd):
                     if self.methods_api_usage:
                         print("\n")
                         for m in self.methods_api_usage:
-                            print(self.t.cyan("\t--> {} -> {} ".format(m[0].class_name, m[0].name)))
+                            print(self.t.cyan("\t--> {} -> {} "
+                                              .format(m[0].class_name,
+                                                      m[0].name)))
                         print("\n")
                     else:
                         SurgicalError("API usage not found (!)")
@@ -112,13 +126,17 @@ class Run(SurgicalCmd):
                         for m in self.methods_api_usage:
                             if selection == m[0].name:
                                 print("\n")
-                                print(self.t.cyan("\t--> Class : {}".format(m[0].class_name)))
-                                print(self.t.cyan("\t\t--> Method : {}".format(m[0].name)))
+                                print(self.t.cyan("\t--> Class : {}"
+                                                  .format(m[0].class_name)))
+                                print(self.t.cyan("\t\t--> Method : {}"
+                                                  .format(m[0].name)))
                                 print(self.t.cyan("\t\t\t --> XREFS ###########"))
                                 self.u.print_xref("T", m[1].method.XREFto.items)
                                 self.u.print_xref("F", m[1].method.XREFfrom.items)
                                 print("\n")
-                                print(highlight(m[2], JavaLexer(), TerminalFormatter()))
+                                print(highlight(m[2],
+                                                JavaLexer(),
+                                                TerminalFormatter()))
                     else:
                         SurgicalError("API usage not found (!)")
                         SurgicalError("Try running --> 'api select' again (!)")
