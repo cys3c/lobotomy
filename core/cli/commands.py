@@ -2,6 +2,8 @@ from cmd2 import Cmd as Lobotomy
 from core.logging.logger import Logger
 from blessings import Terminal
 from core.brains.utilities.util import Util
+from os import path, listdir
+from json import loads
 
 
 class CommandError(Exception):
@@ -12,8 +14,9 @@ class CommandError(Exception):
 
 
 class Run(Lobotomy):
-    def __init__(self):
+    def __init__(self, ROOT_DIR):
         Lobotomy.__init__(self)
+        self.ROOT_DIR = ROOT_DIR
         self.t = Terminal()
         self.logger = Logger()
         self.util = Util()
@@ -231,7 +234,7 @@ class Run(Lobotomy):
                 if self.vm:
                     strings = self.vm.get_strings()
                     if strings:
-                        target = raw_input(self.t.yellow("\n\t--> Enter string : \n"))
+                        target = raw_input(self.t.yellow("\n\t--> Enter string : "))
                         for s in strings:
                             if target in s:
                                 print(self.t.cyan("\t\t --> {}".format(s)))
@@ -297,5 +300,42 @@ class Run(Lobotomy):
 
     def do_macro(self, args):
         """
+        := macro
         """
-        return
+        # Locals
+        macro = path.join(self.ROOT_DIR, "macro")
+        selection = None
+        apk_path = None
+        json = None
+
+        try:
+            print("\n")
+            for f in listdir(macro):
+                for i in range(0, len(listdir(macro))):
+                    print(self.t.cyan("\t--> [{}] {}".format(i, f)))
+            selection = raw_input(self.t.yellow("\n\t--> Select config : "))
+            print("\n")
+            if selection:
+                for f in listdir(macro):
+                    if selection == f:
+                        with open("".join([macro, "/", f]), "rb") as config:
+                            # Read config.json and cover to JSON
+                            json = loads(config.read())
+                            if json:
+                                for k, v in json.items():
+                                    if k == "apk":
+                                        # Make sure we value for the apk key
+                                        if v:
+                                            apk_path = str(v)
+                                            # Start operation
+                                            self.do_operate("apk {}".format(apk_path))
+                                            # TODO Add support for debuggable and decompilation modules
+                                            break
+                                        else:
+                                            CommandError("Path to APK not found in {}".format(selection))
+                            else:
+                                CommandError("Error loading {} as JSON".format(selection))
+                    else:
+                        CommandError("{} not found in the macro directory (!)".format(selection))
+        except Exception as e:
+            CommandError(e)

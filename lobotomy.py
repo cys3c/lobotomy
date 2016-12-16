@@ -1,8 +1,12 @@
+from os import path
 from sys import exit
 from blessings import Terminal
 import sys
 reload(sys)
 sys.setdefaultencoding("utf-8")
+
+# Globals
+ROOT_DIR = path.dirname(path.abspath(__file__))
 t = Terminal()
 
 
@@ -32,7 +36,7 @@ def banner():
 def main():
     # Print the ASCII banner
     banner()
-    run = Run()
+    run = Run(ROOT_DIR)
     run.prompt = t.green("(lobotomy) ")
     run.ruler = t.green("-")
     # Start the main command loop

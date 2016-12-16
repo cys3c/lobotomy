@@ -1,5 +1,5 @@
 {
-  "apk":"/path/to/apk",
+  "apk":"/Users/rotlogix/Downloads/dolphin.apk",
   "decompile":"yes",
   "debuggable":"yes"
 }

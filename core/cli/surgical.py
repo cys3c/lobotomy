@@ -4,6 +4,7 @@ from blessings import Terminal
 from datetime import datetime
 from core.brains.utilities.util import Util
 from core.brains.surgical.modules.intent import IntentModule
+from core.brains.surgical.modules.zip import ZipModule
 from pygments import highlight
 from pygments.lexers import JavaLexer
 from pygments.formatters import TerminalFormatter
@@ -25,8 +26,8 @@ class Run(SurgicalCmd):
         self.vm = vm
         self.vmx = vmx
         self.methods = self.vm.get_methods()
-        self.web = None
         self.intent = IntentModule()
+        self.zip = ZipModule()
         self.modules = [m for m in self.web, self.intent]
         self.target_module = None
         self.methods_api_usage = list()
