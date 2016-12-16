@@ -103,7 +103,6 @@ class Run(SurgicalCmd):
                         # This is so we can support classes with identical
                         # method names --> Ex: java.util.zip.ZipFile
                         if class_selection == k.split(".")[-1]:
-                            print(k)
                             for m in v:
                                 if m == method_selection:
                                     self.logger.surgical_log("info",

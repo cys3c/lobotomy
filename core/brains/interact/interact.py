@@ -17,10 +17,34 @@ class Interact(object):
         Returns:
             return: androguard.core.bytecodes.dvm.ClassDefItem
         """
-        for c in self.vm.get_classes():
-            if name == c.name:
-                return c
-                break
+        try:
+            if name:
+                for c in self.vm.get_classes():
+                    if name == c.name:
+                        return c
+                        break
+        except Exception as e:
+            raise e
+
+    def print_methods(self, c):
+        """
+        Print methods from a target class helper function.
+
+        Args:
+            param1: androguard.core.bytecodes.dvm.ClassDefItem
+
+        Returns:
+            None
+        """
+        try:
+            if c:
+                for m in c.get_methods():
+                    if m.code:
+                        print(m.pretty_show())
+            else:
+                return
+        except Exception as e:
+            raise e
 
     def run(self):
         """
