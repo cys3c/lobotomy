@@ -367,6 +367,25 @@ class Run(Lobotomy):
         except Exception as e:
             CommandError(e.message)
 
+    def do_class_tree(self, args):
+        """
+        := class_tree
+        """
+        try:
+            if self.vm:
+                for c in self.vm.get_classes():
+                    print("\n")
+                    print(self.t.yellow("\t--> class : {}".format(c.name)))
+                    for f in c.get_fields():
+                        print(self.t.white("\t\t--> field : {}".format(f.name)))
+                    for m in c.get_methods():
+                        print(self.t.cyan("\t\t\t--> method : {}".format(m.name)))
+                print("\n")
+            else:
+                CommandError("class_tree : classes.dex not loaded (!)")
+        except Exception as e:
+            CommandError("class_tree : {}".format(e))
+
     def do_macro(self, args):
         """
         := macro

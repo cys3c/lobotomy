@@ -1,12 +1,20 @@
 from IPython.terminal.embed import InteractiveShellEmbed
 from traitlets.config import Config
+from blessings import Terminal
 
 
 class Interact(object):
     def __init__(self, vm, vmx):
+        self.t = Terminal()
         self.vm = vm
         self.vmx = vmx
         self.config = Config()
+
+    def print_class_tree(self):
+        for c in self.vm.get_classes():
+            print(self.t.yellow("\t--> {}".format(c.name)))
+            for m in c.get_methods():
+                print(self.t.yellow("\t\t--> {}".format(m.name)))
 
     def find_class(self, name):
         """
