@@ -12,9 +12,12 @@ class Interact(object):
 
     def print_class_tree(self):
         for c in self.vm.get_classes():
-            print(self.t.yellow("\t--> {}".format(c.name)))
+            print("\n")
+            print(self.t.yellow("\t--> class : {}".format(c.name)))
+            for f in c.get_fields():
+                print(self.t.white("\t\t--> field : {}".format(f.name)))
             for m in c.get_methods():
-                print(self.t.yellow("\t\t--> {}".format(m.name)))
+                print(self.t.cyan("\t\t\t--> method : {}".format(m.name)))
 
     def find_class(self, name):
         """
