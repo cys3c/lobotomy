@@ -33,10 +33,23 @@ Lobotomy is a command line based Android reverse engineering tool.
 
 ### Building 
 #### OSX
+#### Building Requirements for python-adb
+```
+brew install openssl
+```
+```
+brew install swig
+```
+```
+env LDFLAGS="-L$(brew --prefix openssl)/lib" \
+CFLAGS="-I$(brew --prefix openssl)/include" \
+SWIG_FEATURES="-cpperraswarn -includeall -I$(brew --prefix openssl)/include" \
+```
 
 **Create a Python Virtual Environment for Lobotomy** 
 ```
 virtualenv -p /usr/bin/python2.7 lobotomy
+cd lobotomy/
 source bin/activate
 ```
 **Install the PIP Requirements** 
@@ -48,23 +61,6 @@ pip install -r requirements
 cd core/include/androguard
 python setup.py install
 ```
-#### Building python-adb
-```
-brew install openssl
-```
-```
-brew install swig
-```
-```
-env LDFLAGS="-L$(brew --prefix openssl)/lib" \
-CFLAGS="-I$(brew --prefix openssl)/include" \
-SWIG_FEATURES="-cpperraswarn -includeall -I$(brew --prefix openssl)/include" \
-pip install m2crypto
-```
-```
-/lobotomy/core/include/python-adb]> python setup.py install
-```
-
 ### Running
 #### OSX
 ```bash
