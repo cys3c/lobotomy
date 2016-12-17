@@ -49,47 +49,98 @@ class Run(Lobotomy):
                     return True
                     break
 
-    def process_vm(self):
+    def process_vm(self, apk=False, dex=False):
         """
         Process the application's classes.dex
 
         Args:
-            None
+            param1 = boolean
+            param2 = boolean
 
         Results:
             None
         """
-        # Make sure classes.dex exists
-        if self.find_dex():
-            self.dex = self.apk.get_dex()
-            # Analyze classes.dex
-            # TODO Throw in a progress bar, this can take awhile
-            if self.dex:
-                self.logger.log("info", "Loading classes.dex ...")
-                from androguard.core.bytecodes.dvm import DalvikVMFormat
-                from androguard.core.analysis.analysis import VMAnalysis
-                from androguard.core.analysis.ganalysis import GVMAnalysis
-                # Create a new virtual machine instance
-                self.vm = DalvikVMFormat(self.dex)
-                if self.vm:
-                    print(self.t.yellow("\n\t--> Loaded classes.dex (!)\n"))
-                    self.logger.log("info", "Analyzing classes.dex ...")
-                    # Analyze the virtual machine instance
-                    self.vmx = VMAnalysis(self.vm)
-                    self.gmx = GVMAnalysis(self.vmx, None)
-                    if self.vmx and self.gmx:
-                        print(self.t.yellow("\n\t--> Analyzed classes.dex (!)\n"))
-                        self.vm.set_vmanalysis(self.vmx)
-                        self.vm.set_gvmanalysis(self.gmx)
-                        # Generate xref(s)
-                        self.vm.create_xref()
-                        self.vm.create_dref()
-                    else:
-                        CommandError("Cannot analyze VM instance (!)")
+        try:
+            if apk:
+                # Make sure the APK contains a classes.dex file
+                if self.find_dex():
+                    self.dex = self.apk.get_dex()
+                    if self.dex:
+                        self.logger.log("info", "Loading classes.dex ...")
+                        from androguard.core.bytecodes.dvm import DalvikVMFormat
+                        from androguard.core.analysis.analysis import VMAnalysis
+                        from androguard.core.analysis.ganalysis import GVMAnalysis
+                        # Create a DalvikVMFormat instance ...
+                        # In this case self.dex will be a file type
+                        self.vm = DalvikVMFormat(self.dex)
+                        if self.vm:
+                            print(self.t.yellow("\n\t--> Loaded classes.dex (!)\n"))
+                            self.logger.log("info", "Analyzing classes.dex ...")
+                            # Analyze the DalvikVMFormat instance and return
+                            # analysis instances of VMAnalysis and GVMAnalysis
+                            self.vmx = VMAnalysis(self.vm)
+                            self.gmx = GVMAnalysis(self.vmx, None)
+                            if self.vmx and self.gmx:
+                                print(self.t.yellow("\n\t--> Analyzed classes.dex (!)\n"))
+                                # Set the analysis properties on the
+                                # DalvikVMFormat instance
+                                self.vm.set_vmanalysis(self.vmx)
+                                self.vm.set_gvmanalysis(self.gmx)
+                                # Generate xref(s) and dref(s)
+                                self.vm.create_xref()
+                                self.vm.create_dref()
+                            else:
+                                CommandError("process_vm : Cannot analyze VM instance (!)")
+                                return
+                        else:
+                            CommandError("process_vm : Cannot load VM instance (!)")
+                            return
                 else:
-                    CommandError("Cannot load VM instance (!)")
-        else:
-            CommandError("classes.dex not found (!)")
+                    CommandError("process_vm : classes.dex not found (!)")
+                    return
+            if dex:
+                if self.dex:
+                    from androguard.core.bytecodes.dvm import DalvikVMFormat
+                    from androguard.core.analysis.analysis import VMAnalysis
+                    from androguard.core.analysis.ganalysis import GVMAnalysis
+                    # Analyze the DalvikVMFormat instance and return
+                    # analysis instances of VMAnalysis and GVMAnalysis
+                    self.vm = DalvikVMFormat(self.util.read(self.dex))
+                    if self.vm:
+                        print(self.t.yellow("\n\t--> Loaded {} (!)\n"
+                                            .format(self.dex
+                                                    .split("/")[-1])))
+                        self.logger.log("info", "Analyzing {} ..."
+                                        .format(self.dex
+                                                .split("/")[-1]))
+                        # Set the analysis properties on the
+                        # DalvikVMFormat instance
+                        self.vmx = VMAnalysis(self.vm)
+                        self.gmx = GVMAnalysis(self.vmx, None)
+                        if self.vmx and self.gmx:
+                            print(self.t.yellow("\n\t--> Analyzed {} (!)\n"
+                                                .format(self.dex
+                                                        .split("/")[-1])))
+                            # Set the analysis properties on the
+                            # DalvikVMFormat instance
+                            self.vm.set_vmanalysis(self.vmx)
+                            self.vm.set_gvmanalysis(self.gmx)
+                            # Generate xref(s) and dref(s)
+                            self.vm.create_xref()
+                            self.vm.create_dref()
+                        else:
+                            CommandError("process_vm :" +
+                                         "Cannot analyze VM instance (!)")
+                            return
+                    else:
+                        CommandError("process_vm :" +
+                                     "Cannot load VM instance (!)")
+                        return
+            else:
+                CommandError("process_vm : classes.dex not found (!)")
+                return
+        except Exception as e:
+            CommandError("process_vm : {}".format(e))
 
     def do_operate(self, args):
         """
@@ -116,10 +167,17 @@ class Run(Lobotomy):
                         self.permissions = self.apk.get_permissions()
                         self.files = self.apk.get_files()
                         self.files_type = self.apk.get_files_types()
-                        # Process virtual machine
-                        self.process_vm()
+                        # Process DVM
+                        self.process_vm(apk=True)
                     else:
                         CommandError("APK not loaded (!)")
+            elif args.split()[0] == "dex":
+                self.logger.log("info", "Loading : {} ..."
+                                .format(args.split()[1].split("/")[-1]))
+                if args.split()[1]:
+                    self.dex = args.split()[1]
+                    # Process DVM
+                    self.process_vm(dex=True)
             else:
                 CommandError("Unkown command (!)")
         except ImportError as e:
@@ -154,6 +212,8 @@ class Run(Lobotomy):
                 from core.brains.apk.attacksurface import AttackSurface
                 self.attack_surface = AttackSurface(self.apk, self.components)
                 self.attack_surface.run()
+                # Helps with visual spacing after the results are printed
+                print("\n")
         except ImportError as e:
             CommandError(e.message)
 
@@ -277,7 +337,7 @@ class Run(Lobotomy):
                     if self.components.receivers:
                         for r in self.components.receivers:
                             print(self.t.yellow("\t--> receiver : {}"
-                                                .format(s)))
+                                                .format(r)))
                         print("\n")
                     if self.components.providers:
                         for r in self.components.providers:
